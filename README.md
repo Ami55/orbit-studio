@@ -12,10 +12,10 @@ The three fictional persona sets include practical needs, questions and objectio
 
 1. Unzip the complete source archive. Put its contents at your Git repository root, including `api/`, `dist/`, `scripts/`, `package.json` and `vercel.json`.
 2. Import that repository in Vercel. Framework preset: **Other**. The supplied configuration uses `node scripts/build.cjs` and output directory `dist`.
-5. Deploy or redeploy after setting environment variables. For a private pilot, protect the deployment with Vercel Deployment Protection. The API's same-origin check is not a substitute for authentication or an abuse-control system.
-6. In the deployed app, fill in **Business brief** and choose **Gemini** under **Generation mode**. Only the business brief is sent to the server and the shared Gemini backend; locally stored leads are not sent.
+3. Deploy or redeploy; this app needs no API key. For a private pilot, protect the deployment with Vercel Deployment Protection. The API's same-origin check is not a substitute for authentication or an abuse-control system.
+4. In the deployed app, fill in **Business brief** and choose **Gemini** under **Generation mode**. Only the business brief is sent to the server and the shared Gemini backend; locally stored leads are not sent.
 
-The key is read by `api/generate.js` on the server. There is no API-key field in the browser, and no key is stored in frontend files or local storage. `.env.example` contains names only. Never commit a real `.env` file.
+The key stays in the shared proxy; `api/generate.js` sends requests to that backend. There is no API-key field in the browser, and no key is stored in frontend files or local storage. `.env.example` contains names only. Never commit a real `.env` file.
 
 ## What AI mode generates
 
@@ -40,13 +40,12 @@ npm test
 npm run build
 ```
 
-API tests cover method, missing key, invalid brief, cross-origin rejection, valid structured results, incomplete responses, malformed output, authentication failures and rate limits. No real API request has been tested in this delivery because no API key was configured.
+API tests cover method, keyless generation, invalid brief, cross-origin rejection, valid structured results, incomplete responses, malformed output, authentication failures and rate limits. A real campaign generation request passed using the shared backend.
 
 ## References
 
 - Gemini structured output: https://ai.google.dev/gemini-api/docs/structured-output
 - Gemini API documentation: https://ai.google.dev/gemini-api/docs
-- GPT-4.1 mini: https://developers.openai.com/api/docs/models/gpt-4.1-mini
 - Vercel Node functions: https://vercel.com/docs/functions/runtimes/node-js
 - Vercel project configuration: https://vercel.com/docs/project-configuration
 
