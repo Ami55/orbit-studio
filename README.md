@@ -1,6 +1,6 @@
 # Orbit Campaign Studio
 
-A campaign-building prototype with nine fictional demo personas, template generation and optional OpenAI generation. Includes the navy/purple theme and the SEO Girl - Ami footer credit.
+A campaign-building prototype with nine fictional demo personas, template generation and shared Gemini generation. Includes the navy/purple theme and the SEO Girl - Ami footer credit.
 
 ## Try it without a key
 
@@ -12,10 +12,8 @@ The three fictional persona sets include practical needs, questions and objectio
 
 1. Unzip the complete source archive. Put its contents at your Git repository root, including `api/`, `dist/`, `scripts/`, `package.json` and `vercel.json`.
 2. Import that repository in Vercel. Framework preset: **Other**. The supplied configuration uses `node scripts/build.cjs` and output directory `dist`.
-3. In **Project Settings → Environment Variables**, add `OPENAI_API_KEY` with your real OpenAI API key. Enable the deployment environments you intend to use. Do not prefix it with `VITE_` or `NEXT_PUBLIC_`.
-4. Optionally set `OPENAI_MODEL`. The default is `gpt-4.1-mini`; the chosen model must support Responses API Structured Outputs and be available to your API project.
 5. Deploy or redeploy after setting environment variables. For a private pilot, protect the deployment with Vercel Deployment Protection. The API's same-origin check is not a substitute for authentication or an abuse-control system.
-6. In the deployed app, fill in **Business brief** and choose **OpenAI** under **Generation mode**. Only the business brief is sent to the server and OpenAI; locally stored leads are not sent.
+6. In the deployed app, fill in **Business brief** and choose **Gemini** under **Generation mode**. Only the business brief is sent to the server and the shared Gemini backend; locally stored leads are not sent.
 
 The key is read by `api/generate.js` on the server. There is no API-key field in the browser, and no key is stored in frontend files or local storage. `.env.example` contains names only. Never commit a real `.env` file.
 
@@ -28,7 +26,7 @@ The page layouts remain deterministic templates. AI supplies text, not executabl
 ## Files
 
 - `dist/`: app UI and static assets.
-- `api/generate.js`: server-only Responses API endpoint, input/output validation, timeout and error handling.
+- `api/generate.js`: server-only shared Gemini endpoint, input/output validation, timeout and error handling.
 - `vercel.json`: Vercel build output and function duration configuration.
 - `.env.example`: server environment variable names.
 - `tests/api.test.cjs`: mocked API tests (no real API call or key required).
@@ -46,8 +44,12 @@ API tests cover method, missing key, invalid brief, cross-origin rejection, vali
 
 ## References
 
-- OpenAI Structured Outputs: https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses
-- OpenAI authentication: https://developers.openai.com/api/reference/overview
+- Gemini structured output: https://ai.google.dev/gemini-api/docs/structured-output
+- Gemini API documentation: https://ai.google.dev/gemini-api/docs
 - GPT-4.1 mini: https://developers.openai.com/api/docs/models/gpt-4.1-mini
 - Vercel Node functions: https://vercel.com/docs/functions/runtimes/node-js
 - Vercel project configuration: https://vercel.com/docs/project-configuration
+
+## Shared Gemini connection
+
+`api/generate.js` sends the brief, original system prompt and complete JSON schema to `https://gemini-proxy-boldstudio.vercel.app/api/gemini`. No API key is needed in this app. The shared proxy holds the credential server-side. Output is validated before replacing the current campaign. Template mode remains available without AI. Stored leads are not sent.
